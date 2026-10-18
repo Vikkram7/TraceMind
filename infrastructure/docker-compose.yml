@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tracemind-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tracemind}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tracemind}
+      POSTGRES_DB: ${POSTGRES_DB:-tracemind_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracemind -d tracemind_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tracemind-net
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.111.0
+    container_name: tracemind-otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ../observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    depends_on:
+      - tracemind-backend
+    networks:
+      - tracemind-net
+
+  neo4j:
+    image: neo4j:5-community
+    container_name: tracemind-neo4j
+    profiles:
+      - graph
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/tracemind123}
+    ports:
+      - "7474:7474" # Browser
+      - "7687:7687" # Bolt
+    volumes:
+      - neo4j-data:/data
+    networks:
+      - tracemind-net
+
+  tracemind-backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: tracemind-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tracemind_db
+      SPRING_DATASOURCE_USERNAME: tracemind
+      SPRING_DATASOURCE_PASSWORD: tracemind
+      TRACEMIND_LLM_PROVIDER: ${TRACEMIND_LLM_PROVIDER:-disabled}
+      TRACEMIND_LLM_API_KEY: ${TRACEMIND_LLM_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tracemind-net
+
+  tracemind-frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: tracemind-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - tracemind-backend
+    networks:
+      - tracemind-net
+
+  order-service:
+    build:
+      context: ../services/order-service
+      dockerfile: Dockerfile
+    container_name: tracemind-order-service
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      SERVICES_PAYMENT_URL: http://payment-service:8082
+      SERVICES_INVENTORY_URL: http://inventory-service:8083
+    depends_on:
+      - otel-collector
+    networks:
+      - tracemind-net
+
+  payment-service:
+    build:
+      context: ../services/payment-service
+      dockerfile: Dockerfile
+    container_name: tracemind-payment-service
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    depends_on:
+      - otel-collector
+    networks:
+      - tracemind-net
+
+  inventory-service:
+    build:
+      context: ../services/inventory-service
+      dockerfile: Dockerfile
+    container_name: tracemind-inventory-service
+    ports:
+      - "8083:8083"
+    environment:
+      SERVER_PORT: 8083
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    depends_on:
+      - otel-collector
+    networks:
+      - tracemind-net
+
+networks:
+  tracemind-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  neo4j-data:

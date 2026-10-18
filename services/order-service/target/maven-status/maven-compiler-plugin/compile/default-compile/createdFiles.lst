@@ -1,0 +1,16 @@
+com\tracemind\order\model\OrderModels.class
+com\tracemind\order\telemetry\TelemetrySpanDto.class
+com\tracemind\order\telemetry\W3CTracePropagator.class
+com\tracemind\order\fault\FaultConfiguration.class
+com\tracemind\order\model\OrderModels$OrderItem.class
+com\tracemind\order\controller\OrderController.class
+com\tracemind\order\fault\FaultController.class
+com\tracemind\order\model\OrderModels$OrderResponse.class
+com\tracemind\order\telemetry\TracingRestTemplateInterceptor.class
+com\tracemind\order\model\OrderModels$OrderRequest.class
+com\tracemind\order\telemetry\TelemetryClient.class
+com\tracemind\order\telemetry\TraceContextHolder.class
+com\tracemind\order\telemetry\W3CTracePropagator$TraceParent.class
+com\tracemind\order\telemetry\TracingFilter.class
+com\tracemind\order\OrderServiceApplication.class
+com\tracemind\order\telemetry\TraceContext.class

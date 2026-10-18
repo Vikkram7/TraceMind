@@ -1,0 +1,19 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: order-service
+
+tracemind:
+  telemetry:
+    endpoint: ${TRACEMIND_TELEMETRY_ENDPOINT:http://localhost:8080/v1/traces}
+  services:
+    payment-url: ${SERVICES_PAYMENT_URL:http://localhost:8082}
+    inventory-url: ${SERVICES_INVENTORY_URL:http://localhost:8083}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

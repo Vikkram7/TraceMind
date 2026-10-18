@@ -1,0 +1,11 @@
+com\tracemind\payment\telemetry\TelemetryClient.class
+com\tracemind\payment\telemetry\W3CTracePropagator$TraceParent.class
+com\tracemind\payment\telemetry\TraceContext.class
+com\tracemind\payment\fault\FaultController.class
+com\tracemind\payment\telemetry\TelemetrySpanDto.class
+com\tracemind\payment\telemetry\W3CTracePropagator.class
+com\tracemind\payment\telemetry\TracingFilter.class
+com\tracemind\payment\telemetry\TraceContextHolder.class
+com\tracemind\payment\fault\FaultConfiguration.class
+com\tracemind\payment\controller\PaymentController.class
+com\tracemind\payment\PaymentServiceApplication.class

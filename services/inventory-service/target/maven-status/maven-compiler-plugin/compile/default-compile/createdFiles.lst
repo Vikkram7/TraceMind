@@ -1,0 +1,11 @@
+com\tracemind\inventory\telemetry\TraceContextHolder.class
+com\tracemind\inventory\fault\FaultController.class
+com\tracemind\inventory\telemetry\W3CTracePropagator$TraceParent.class
+com\tracemind\inventory\telemetry\TelemetrySpanDto.class
+com\tracemind\inventory\telemetry\TracingFilter.class
+com\tracemind\inventory\telemetry\TelemetryClient.class
+com\tracemind\inventory\controller\InventoryController.class
+com\tracemind\inventory\fault\FaultConfiguration.class
+com\tracemind\inventory\telemetry\TraceContext.class
+com\tracemind\inventory\telemetry\W3CTracePropagator.class
+com\tracemind\inventory\InventoryServiceApplication.class

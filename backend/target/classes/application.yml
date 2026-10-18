@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: tracemind-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:tracemind_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    database-platform: ${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.H2Dialect}
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+tracemind:
+  llm:
+    provider: ${TRACEMIND_LLM_PROVIDER:disabled} # disabled | openai | gemini | anthropic | ollama
+    api-key: ${TRACEMIND_LLM_API_KEY:}
+    base-url: ${TRACEMIND_LLM_BASE_URL:}
+    model: ${TRACEMIND_LLM_MODEL:gpt-4o-mini}
+  detection:
+    latency-threshold-ms: 800.0
+    error-rate-threshold: 0.15
+    rolling-window-size: 20
+    z-score-threshold: 2.5

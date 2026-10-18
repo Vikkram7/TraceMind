@@ -1,0 +1,16 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: inventory-service
+
+tracemind:
+  telemetry:
+    endpoint: ${TRACEMIND_TELEMETRY_ENDPOINT:http://localhost:8080/v1/traces}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

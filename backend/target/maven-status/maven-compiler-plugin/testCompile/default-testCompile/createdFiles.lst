@@ -1,0 +1,4 @@
+com\tracemind\backend\TelemetryIngestionIntegrationTest.class
+com\tracemind\backend\analysis\TraceDivergenceEngineTest.class
+com\tracemind\backend\service\IncidentDetectionServiceTest.class
+com\tracemind\backend\analysis\RootCauseRankingEngineTest.class
